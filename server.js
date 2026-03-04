@@ -144,6 +144,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   const handleSuccessfulLogin = async (user) => {
+    db.run('UPDATE users SET failed_attempts = 0 WHERE id = ?', [user.id]);
     // Check password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
@@ -184,6 +185,22 @@ app.post('/api/auth/login', (req, res) => {
     if (err) return res.status(500).json({ error: 'Server error' });
     if (user) return handleSuccessfulLogin(user);
 
+  //check lockout
+  if (user.is_locked === 1) {
+    return res.status(403).json({ error: 'Account locked due to too many failed attempts.' });
+  }
+  //check password
+  const validPassword = await bcrypt.compare(password, user.password);
+   if (!validPassword) {
+      const newAttempts = (user.failed_attempts || 0) + 1;
+      if (newAttempts >= 3) {
+        db.run('UPDATE users SET failed_attempts = ?, is_locked = 1 WHERE id = ?', [newAttempts, user.id]);
+        return res.status(403).json({ error: 'Account locked after 3 failed attempts.' });
+      } else {
+        db.run('UPDATE users SET failed_attempts = ? WHERE id = ?', [newAttempts, user.id]);
+        return res.status(401).json({ error: `Invalid credentials. ${3 - newAttempts} attempts left.` });
+      }
+    }
     // Fallback for legacy rows where phone may have been stored with formatting or +1 prefix.
     const strippedPhoneExpr = "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '-', ''), '(', ''), ')', ''), ' ', ''), '+', ''), '.', '')";
     const fallbackQuery = `SELECT * FROM users WHERE ${strippedPhoneExpr} IN (?, ?)`;
