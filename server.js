@@ -183,33 +183,12 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(400).json({ error: 'Unsupported identifier type.' });
   }
 
-    // Reset failed attempts
-    db.run('UPDATE users SET failed_attempts = 0 WHERE id = ?', [user.id]);
-
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: toClientEmail(user.email),
-        phone: user.phone || null
-      }
-    });
-  };
-
   if (!isPhone) {
     const normalizedEmail = normalizeEmail(identifier);
     return db.get('SELECT * FROM users WHERE LOWER(email) = ?', [normalizedEmail], async (err, user) => {
       if (err) return res.status(500).json({ error: 'Server error' });
       if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-      return handleSuccessfulLogin(user);
+      return handleLogin(req, res, user);
     });
   }
 
@@ -224,22 +203,9 @@ app.post('/api/auth/login', (req, res) => {
       if (fallbackErr) return res.status(500).json({ error: 'Server error' });
       if (!fallbackUser) return res.status(401).json({ error: 'Invalid credentials' });
       return handleLogin(req, res, fallbackUser);
-    });
-    
-    // Fallback for legacy rows where phone may have been stored with formatting or +1 prefix.
-    const strippedPhoneExpr = "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '-', ''), '(', ''), ')', ''), ' ', ''), '+', ''), '.', '')";
-    const fallbackQuery = `SELECT * FROM users WHERE ${strippedPhoneExpr} IN (?, ?)`;
-
-    db.get(fallbackQuery, [normalized, `1${normalized}`], async (fallbackErr, fallbackUser) => {
-      if (fallbackErr) return res.status(500).json({ error: 'Server error' });
-      if (!fallbackUser) return res.status(401).json({ error: 'Invalid credentials' });
-      return handleLogin(req, res, user);
-    });
+    });   
   });
 });
-
-    
-
 // Get current user
 app.get('/api/auth/me', authenticateToken, (req, res) => {
   db.get('SELECT id, username, email, phone FROM users WHERE id = ?', [req.user.id], (err, user) => {
