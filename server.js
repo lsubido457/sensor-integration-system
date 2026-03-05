@@ -121,6 +121,46 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
+const handleLogin = async (req, res, user) => {
+  const { password } = req.body;
+
+  if (user.is_locked === 1) {
+    return res.status(403).json({ error: 'Account locked due to too many failed attempts.' });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+
+  if (!validPassword) {
+    const newAttempts = (user.failed_attempts || 0) + 1;
+    if (newAttempts >= 3) {
+      db.run('UPDATE users SET failed_attempts = ?, is_locked = 1 WHERE id = ?', [newAttempts, user.id]);
+      return res.status(403).json({ error: 'Account locked after 3 failed attempts.' });
+    } else {
+      db.run('UPDATE users SET failed_attempts = ? WHERE id = ?', [newAttempts, user.id]);
+      return res.status(401).json({ error: `Invalid credentials. ${3 - newAttempts} attempt${3 - newAttempts === 1 ? '' : 's'} left.` });
+    }
+  }
+
+  db.run('UPDATE users SET failed_attempts = 0, is_locked = 0 WHERE id = ?', [user.id]);
+
+  const token = jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+
+  res.json({
+    message: 'Login successful',
+    token,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: toClientEmail(user.email),
+      phone: user.phone || null
+    }
+  });
+};
+
 // Login
 app.post('/api/auth/login', (req, res) => {
   const identifier = (req.body.identifier || req.body.phone || req.body.email || '').trim();
@@ -142,14 +182,6 @@ app.post('/api/auth/login', (req, res) => {
   if (!['email', 'phone'].includes(resolvedType)) {
     return res.status(400).json({ error: 'Unsupported identifier type.' });
   }
-
-  const handleSuccessfulLogin = async (user) => {
-    db.run('UPDATE users SET failed_attempts = 0 WHERE id = ?', [user.id]);
-    // Check password
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
 
     // Reset failed attempts
     db.run('UPDATE users SET failed_attempts = 0 WHERE id = ?', [user.id]);
@@ -183,24 +215,17 @@ app.post('/api/auth/login', (req, res) => {
 
   db.get('SELECT * FROM users WHERE phone = ?', [normalized], async (err, user) => {
     if (err) return res.status(500).json({ error: 'Server error' });
-    if (user) return handleSuccessfulLogin(user);
+    if (user) return handleLogin(req, res, user);
+    
+    const strippedPhoneExpr = "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '-', ''), '(', ''), ')', ''), ' ', ''), '+', ''), '.', '')";
+    const fallbackQuery = `SELECT * FROM users WHERE ${strippedPhoneExpr} IN (?, ?)`;
 
-  //check lockout
-  if (user.is_locked === 1) {
-    return res.status(403).json({ error: 'Account locked due to too many failed attempts.' });
-  }
-  //check password
-  const validPassword = await bcrypt.compare(password, user.password);
-   if (!validPassword) {
-      const newAttempts = (user.failed_attempts || 0) + 1;
-      if (newAttempts >= 3) {
-        db.run('UPDATE users SET failed_attempts = ?, is_locked = 1 WHERE id = ?', [newAttempts, user.id]);
-        return res.status(403).json({ error: 'Account locked after 3 failed attempts.' });
-      } else {
-        db.run('UPDATE users SET failed_attempts = ? WHERE id = ?', [newAttempts, user.id]);
-        return res.status(401).json({ error: `Invalid credentials. ${3 - newAttempts} attempts left.` });
-      }
-    }
+    db.get(fallbackQuery, [normalized, `1${normalized}`], async (fallbackErr, fallbackUser) => {
+      if (fallbackErr) return res.status(500).json({ error: 'Server error' });
+      if (!fallbackUser) return res.status(401).json({ error: 'Invalid credentials' });
+      return handleLogin(req, res, fallbackUser);
+    });
+    
     // Fallback for legacy rows where phone may have been stored with formatting or +1 prefix.
     const strippedPhoneExpr = "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '-', ''), '(', ''), ')', ''), ' ', ''), '+', ''), '.', '')";
     const fallbackQuery = `SELECT * FROM users WHERE ${strippedPhoneExpr} IN (?, ?)`;
@@ -208,7 +233,7 @@ app.post('/api/auth/login', (req, res) => {
     db.get(fallbackQuery, [normalized, `1${normalized}`], async (fallbackErr, fallbackUser) => {
       if (fallbackErr) return res.status(500).json({ error: 'Server error' });
       if (!fallbackUser) return res.status(401).json({ error: 'Invalid credentials' });
-      return handleSuccessfulLogin(fallbackUser);
+      return handleLogin(req, res, user);
     });
   });
 });
