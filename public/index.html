@@ -7,1151 +7,920 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-    }
-
-    .app-container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .auth-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .auth-box {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .auth-box h2 {
-      margin-bottom: 30px;
-      color: #333;
-      text-align: center;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #555;
-      font-weight: 500;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      background: #5568d3;
-    }
-
-    .btn-success {
-      background: #28a745;
-    }
-
-    .btn-danger {
-      background: #dc3545;
-    }
-
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .auth-switch {
-      text-align: center;
-      margin-top: 20px;
-      color: #666;
-    }
-
-    .auth-switch a {
-      color: #667eea;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .navbar {
-      background: white;
-      padding: 15px 30px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .navbar h1 {
-      color: #667eea;
-      font-size: 24px;
-    }
-
-    .navbar-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .logout-btn {
-      padding: 8px 20px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .dashboard {
-      flex: 1;
-      padding: 30px;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    .dashboard-header h2 {
-      color: white;
-      font-size: 28px;
-    }
-
-    .add-device-btn {
-      padding: 12px 24px;
-      background: white;
-      color: #667eea;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    .devices-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 20px;
-    }
-
-    .device-card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .device-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 15px;
-    }
-
-    .device-info h3 {
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    .device-type {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .device-status {
-      padding: 5px 10px;
-      border-radius: 15px;
-      font-size: 12px;
-      font-weight: 600;
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .sensor-readings {
-      margin: 15px 0;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-
-    .reading {
-      display: flex;
-      justify-content: space-between;
-      margin: 8px 0;
-      font-size: 14px;
-    }
-
-    .reading-label {
-      color: #666;
-      font-weight: 500;
-    }
-
-    .reading-value {
-      color: #333;
-      font-weight: 600;
-    }
-
-    .device-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .device-actions button {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: white;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-    }
-
-    .modal h3 {
-      margin-bottom: 20px;
-      color: #333;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-    }
-    /* User Profile Styles */
-    .profile-btn {
-      padding: 8px 20px;
-      background: #f8f9fa;
-      color: #667eea;
-      border: 2px solid #667eea;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      margin-right: 10px;
-    }
-
-    .profile-btn:hover {
-      background: #667eea;
-      color: white;
-    }
-
-    .profile-modal {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 600px;
-    }
-
-    .profile-section {
-      margin-bottom: 25px;
-    }
-
-    .profile-section h4 {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    .profile-info {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .profile-info p {
-      margin: 8px 0;
-      color: #555;
-    }
-
-    .profile-info strong {
-      color: #333;
-    }
-
-    .timeout-setting {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .timeout-setting input {
-      width: 80px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .timeout-setting select {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .inactivity-warning {
-      background: #fff3cd;
-      color: #856404;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 15px;
-      font-weight: 600;
-    }
-      /* Countdown Timer Styles */
-    .countdown-timer {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 999;
-      min-width: 200px;
-    }
-
-    .countdown-timer.warning {
-      background: #fff3cd;
-      border: 2px solid #ffc107;
-    }
-
-    .countdown-timer.critical {
-      background: #f8d7da;
-      border: 2px solid #dc3545;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    .timer-icon {
-      font-size: 24px;
-    }
-
-    .timer-content {
-      flex: 1;
-    }
-
-    .timer-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 3px;
-    }
-
-    .timer-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: #333;
-    }
-
-    .timer-value.warning {
-      color: #856404;
-    }
-
-    .timer-value.critical {
-      color: #721c24;
-    }
-
-    .timer-close {
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #999;
-      padding: 0;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timer-close:hover {
-      color: #333;
-    }
-
-    .show-timer-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .show-timer-btn:hover {
-      background: #5568d3;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .app-container { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* AUTH */
+    .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .auth-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 420px; }
+    .auth-box h2 { margin-bottom: 30px; color: #333; text-align: center; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; font-size: 14px; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #667eea; }
+    .btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: #5568d3; }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
+    .btn-success { background: #28a745; } .btn-success:hover { background: #218838; }
+    .btn-danger { background: #dc3545; } .btn-danger:hover { background: #c82333; }
+    .btn-grey { background: #6c757d; } .btn-grey:hover { background: #5a6268; }
+    .error-message { background: #f8d7da; color: #721c24; padding: 10px 14px; border-radius: 5px; margin-bottom: 15px; font-size: 14px; }
+    .success-message { background: #d4edda; color: #155724; padding: 10px 14px; border-radius: 5px; margin-bottom: 15px; font-size: 14px; }
+    .auth-switch { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+    .auth-switch a { color: #667eea; cursor: pointer; font-weight: 600; }
+    .auth-link { color: #667eea; cursor: pointer; font-size: 13px; text-decoration: underline; background: none; border: none; padding: 0; }
+
+    /* NAVBAR */
+    .navbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .navbar h1 { color: #667eea; font-size: 22px; }
+    .navbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .logout-btn { padding: 8px 18px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+    .profile-btn { padding: 8px 14px; background: #f8f9fa; color: #667eea; border: 2px solid #667eea; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .profile-btn:hover { background: #667eea; color: white; }
+    .admin-btn { padding: 8px 14px; background: #f8f9fa; color: #e74c3c; border: 2px solid #e74c3c; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .admin-btn:hover { background: #e74c3c; color: white; }
+
+    /* DASHBOARD */
+    .dashboard { flex: 1; padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .dashboard-header h2 { color: white; font-size: 26px; }
+    .add-device-btn { padding: 11px 22px; background: white; color: #667eea; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 15px; }
+    .devices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+    .device-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .device-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+    .device-info h3 { color: #333; margin-bottom: 4px; }
+    .device-type { color: #666; font-size: 13px; }
+    .device-status { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #d4edda; color: #155724; }
+    .sensor-readings { margin: 15px 0; padding: 14px; background: #f8f9fa; border-radius: 8px; }
+    .reading { display: flex; justify-content: space-between; margin: 7px 0; font-size: 14px; }
+    .reading-label { color: #666; font-weight: 500; }
+    .reading-value { color: #333; font-weight: 600; }
+    .device-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .device-actions button { flex: 1; padding: 8px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: white; }
+
+    /* MODALS */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.55); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal { background: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal h3 { margin-bottom: 16px; color: #333; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions button { flex: 1; }
+    .profile-modal { background: white; padding: 36px; border-radius: 10px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; }
+    .profile-section { margin-bottom: 22px; }
+    .profile-section h4 { color: #333; margin-bottom: 10px; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+    .profile-info { background: #f8f9fa; padding: 14px; border-radius: 8px; }
+    .profile-info p { margin: 7px 0; color: #555; font-size: 14px; }
+    .timeout-setting { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .timeout-setting input { width: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+    .inactivity-warning { background: #fff3cd; color: #856404; padding: 12px; border-radius: 6px; text-align: center; margin-top: 12px; font-weight: 600; font-size: 13px; }
+    .danger-zone { margin-top: 10px; padding: 14px; background: #fff5f5; border-radius: 8px; border: 1px solid #f5c6cb; }
+    .danger-zone p { font-size: 13px; color: #721c24; margin-bottom: 10px; }
+
+    /* COUNTDOWN TIMER */
+    .countdown-timer { position: fixed; bottom: 20px; right: 20px; background: white; padding: 14px 18px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 999; min-width: 190px; }
+    .countdown-timer.warning { background: #fff3cd; border: 2px solid #ffc107; }
+    .countdown-timer.critical { background: #f8d7da; border: 2px solid #dc3545; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .timer-icon { font-size: 22px; }
+    .timer-content { flex: 1; }
+    .timer-label { font-size: 11px; color: #666; margin-bottom: 2px; }
+    .timer-value { font-size: 17px; font-weight: 700; color: #333; }
+    .timer-value.warning { color: #856404; }
+    .timer-value.critical { color: #721c24; }
+    .timer-close { background: transparent; border: none; font-size: 18px; cursor: pointer; color: #aaa; }
+    .show-timer-btn { position: fixed; bottom: 20px; right: 20px; background: #667eea; color: white; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 22px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; align-items: center; justify-content: center; }
+
+    /* TABS */
+    .tab-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn { padding: 9px 22px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; background: rgba(255,255,255,0.25); color: white; transition: background 0.2s; }
+    .tab-btn:hover { background: rgba(255,255,255,0.4); }
+    .tab-btn.active { background: white; color: #667eea; }
+    .tab-btn.admin-tab.active { color: #e74c3c; }
+
+    /* ADMIN */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: white; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    .stat-card .stat-value { font-size: 30px; font-weight: 700; color: #667eea; }
+    .stat-card .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+    .sa-section { margin-bottom: 28px; }
+    .sa-section h3 { color: white; margin-bottom: 12px; font-size: 17px; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th { text-align: left; padding: 10px 12px; background: #f4f5f7; color: #555; border-bottom: 2px solid #ddd; font-size: 13px; }
+    .admin-table td { padding: 10px 12px; border-bottom: 1px solid #eee; color: #333; font-size: 13px; vertical-align: middle; }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr.clickable-row { cursor: pointer; }
+    .admin-table tr.clickable-row:hover td { background: #f0f4ff; }
+    .admin-table tr.disabled-row { opacity: 0.6; background: #fff5f5; }
+    .admin-table tr.locked-row { background: #fffbf0; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-admin { background: #cce5ff; color: #004085; }
+    .badge-user { background: #e2e3e5; color: #383d41; }
+    .badge-active { background: #d4edda; color: #155724; }
+    .badge-disabled { background: #f8d7da; color: #721c24; }
+    .badge-locked { background: #fff3cd; color: #856404; }
+    .badge-action-disable { background: #f8d7da; color: #721c24; }
+    .badge-action-enable { background: #d4edda; color: #155724; }
+    .badge-action-delete { background: #f8d7da; color: #721c24; }
+    .badge-action-reset { background: #fff3cd; color: #856404; }
+    .badge-action-unlock { background: #cce5ff; color: #004085; }
+    .badge-action-other { background: #e2e3e5; color: #383d41; }
+    .sa-btn { padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; margin-right: 4px; margin-bottom: 3px; white-space: nowrap; }
+    .sa-btn-danger { background: #dc3545; color: white; }
+    .sa-btn-warning { background: #ffc107; color: #333; }
+    .sa-btn-success { background: #28a745; color: white; }
+    .sa-btn-info { background: #17a2b8; color: white; }
+    .sa-btn-secondary { background: #6c757d; color: white; }
+    .expanded-detail { background: #f8f9ff; border-bottom: 2px solid #667eea; }
+    .expanded-detail td { padding: 14px 18px !important; }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 8px; }
+    .detail-field { font-size: 12px; color: #888; }
+    .detail-field strong { display: block; color: #333; font-size: 13px; margin-top: 2px; }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .log-table th { text-align: left; padding: 9px 10px; background: #f4f5f7; color: #555; border-bottom: 2px solid #ddd; }
+    .log-table td { padding: 8px 10px; border-bottom: 1px solid #eee; color: #444; vertical-align: top; }
+    .log-table tr:hover td { background: #f9f9f9; }
+
+    /* PW REQUIREMENTS */
+    .pw-requirements { margin-top: 8px; padding: 10px 12px; background: #f8f9fa; border-radius: 6px; font-size: 13px; }
+    .pw-req-item { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .pw-req-item.met { color: #28a745; }
+    .pw-req-item.unmet { color: #aaa; }
+
+    /* TEMP PASSWORD BOX */
+    .temp-password-box { background: #1a1a2e; color: #00ff88; font-family: monospace; font-size: 22px; padding: 16px; border-radius: 8px; text-align: center; letter-spacing: 4px; margin: 12px 0; cursor: pointer; user-select: all; }
+    .copy-hint { font-size: 12px; color: #999; text-align: center; }
+
+    /* VERIFICATION CODE BOXES */
+    .verify-boxes { display: flex; gap: 8px; margin-bottom: 10px; }
+    .verify-box { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 46px; background: #f0f4ff; border: 2px solid #667eea; border-radius: 6px; font-family: monospace; font-size: 20px; font-weight: 700; color: #333; }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
+<script type="text/babel">
+  const { useState, useEffect, useRef } = React;
+  const API_URL = '/api';
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
-    const API_URL = '/api';
-
-    // Inactivity Timer Hook with Countdown
-    function useInactivityTimer(timeoutMinutes, onTimeout, onTick) {
-      const timerRef = useRef(null);
-      const intervalRef = useRef(null);
-      const [secondsLeft, setSecondsLeft] = useState(timeoutMinutes * 60);
-
-      const resetTimer = () => {
-        // Clear existing timers
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-        }
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-
-        // Reset seconds
-        setSecondsLeft(timeoutMinutes * 60);
-
-        // Start countdown interval (updates every second)
-        intervalRef.current = setInterval(() => {
-          setSecondsLeft(prev => {
-            const newValue = prev - 1;
-            if (onTick) onTick(newValue);
-            return newValue;
-          });
-        }, 1000);
-
-        // Set timeout for logout
-        timerRef.current = setTimeout(() => {
-          onTimeout();
-        }, timeoutMinutes * 60 * 1000);
+  // ===== INACTIVITY TIMER =====
+  function useInactivityTimer(timeoutMinutes, onTimeout) {
+    const timerRef = useRef(null);
+    const intervalRef = useRef(null);
+    const [secondsLeft, setSecondsLeft] = useState(timeoutMinutes * 60);
+    const resetTimer = () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setSecondsLeft(timeoutMinutes * 60);
+      intervalRef.current = setInterval(() => setSecondsLeft(p => p - 1), 1000);
+      timerRef.current = setTimeout(onTimeout, timeoutMinutes * 60 * 1000);
+    };
+    useEffect(() => {
+      const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+      events.forEach(e => window.addEventListener(e, resetTimer));
+      resetTimer();
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        events.forEach(e => window.removeEventListener(e, resetTimer));
       };
+    }, [timeoutMinutes]);
+    return secondsLeft;
+  }
 
-      useEffect(() => {
-        // Events that reset the timer
-        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-        
-        events.forEach(event => {
-          window.addEventListener(event, resetTimer);
-        });
-
-        resetTimer(); // Start timer
-
-        return () => {
-          if (timerRef.current) {
-            clearTimeout(timerRef.current);
-          }
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-          }
-          events.forEach(event => {
-            window.removeEventListener(event, resetTimer);
-          });
-        };
-      }, [timeoutMinutes]);
-
-      return secondsLeft;
-    }
-
-    // Countdown Timer Display Component
-    function CountdownTimer({ secondsLeft, totalMinutes, onClose }) {
-      const [isVisible, setIsVisible] = useState(true);
-
-      const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-      };
-
-      const getTimerState = () => {
-        const percentage = (secondsLeft / (totalMinutes * 60)) * 100;
-        if (percentage <= 10) return 'critical';
-        if (percentage <= 30) return 'warning';
-        return 'normal';
-      };
-
-      const timerState = getTimerState();
-
-      if (!isVisible) {
-        return (
-          <button className="show-timer-btn" onClick={() => setIsVisible(true)} title="Show timer">
-            ⏱️
-          </button>
-        );
-      }
-
-      return (
-        <div className={`countdown-timer ${timerState}`}>
-          <div className="timer-icon">
-            {timerState === 'critical' ? '⚠️' : timerState === 'warning' ? '⏰' : '⏱️'}
-          </div>
-          <div className="timer-content">
-            <div className="timer-label">Auto-logout in</div>
-            <div className={`timer-value ${timerState}`}>{formatTime(secondsLeft)}</div>
-          </div>
-          <button className="timer-close" onClick={() => setIsVisible(false)} title="Hide timer">
-            ×
-          </button>
+  // ===== COUNTDOWN DISPLAY =====
+  function CountdownTimer({ secondsLeft, totalMinutes }) {
+    const [visible, setVisible] = useState(true);
+    const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    const pct = (secondsLeft / (totalMinutes * 60)) * 100;
+    const state = pct <= 10 ? 'critical' : pct <= 30 ? 'warning' : 'normal';
+    if (!visible) return <button className="show-timer-btn" onClick={() => setVisible(true)}>⏱️</button>;
+    return (
+      <div className={`countdown-timer ${state}`}>
+        <div className="timer-icon">{state === 'critical' ? '⚠️' : '⏱️'}</div>
+        <div className="timer-content">
+          <div className="timer-label">Auto-logout in</div>
+          <div className={`timer-value ${state}`}>{fmt(secondsLeft)}</div>
         </div>
-      );
-    }
+        <button className="timer-close" onClick={() => setVisible(false)}>×</button>
+      </div>
+    );
+  }
 
-    // Auth Component
-    function Auth({ onLogin }) {
-      const [isLogin, setIsLogin] = useState(true);
-      const [formData, setFormData] = useState({ username: '', identifier: '', password: '' });
-      const [error, setError] = useState('');
-      const [success, setSuccess] = useState('');
-      const [verificationCode, setVerificationCode] = useState('');
-      const [verificationInput, setVerificationInput] = useState('');
-      const [showVerification, setShowVerification] = useState(false);
-      const generateVerificationCode = () => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let raw = '';
-        for (let i = 0; i < 6; i++) {
-          raw += chars.charAt(Math.floor(Math.random() * chars.length));
+  // ===== PASSWORD REQUIREMENTS =====
+  function PwRequirements({ password }) {
+    const reqs = [
+      { label: 'At least 8 characters', test: password.length >= 8 },
+      { label: 'One uppercase letter (A-Z)', test: /[A-Z]/.test(password) },
+      { label: 'One lowercase letter (a-z)', test: /[a-z]/.test(password) },
+      { label: 'One number (0-9)', test: /[0-9]/.test(password) },
+      { label: 'One special character (!@#$...)', test: /[^A-Za-z0-9]/.test(password) },
+    ];
+    return (
+      <div className="pw-requirements">
+        <div style={{ fontWeight: 600, color: '#555', marginBottom: '6px', fontSize: '12px' }}>Password requirements:</div>
+        {reqs.map((r, i) => (
+          <div key={i} className={`pw-req-item ${r.test ? 'met' : 'unmet'}`}>
+            <span>{r.test ? '✅' : '⭕'}</span><span>{r.label}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // ===== AUTH =====
+  function Auth({ onLogin }) {
+    const [isLogin, setIsLogin] = useState(true);
+    const [formData, setFormData] = useState({ username: '', identifier: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [verificationInput, setVerificationInput] = useState('');
+    const [showVerification, setShowVerification] = useState(false);
+    const [showForgot, setShowForgot] = useState(false);
+    const [forgotId, setForgotId] = useState('');
+    const [forgotMsg, setForgotMsg] = useState(null);
+    const [forgotLoading, setForgotLoading] = useState(false);
+
+    const generateCode = () => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+      return code;
+    };
+    const resetVerification = () => { setVerificationCode(generateCode()); setVerificationInput(''); };
+
+    const normalizePhone = (v = '') => { const d = String(v).replace(/\D/g,''); return d.length===11&&d.startsWith('1')?d.slice(1):d; };
+    const detectType = (v = '') => { const t=v.trim(); if(t.includes('@'))return'email'; if(/^\d{10}$/.test(normalizePhone(t)))return'phone'; return null; };
+
+    const handleIdentifierChange = v => { setVerificationInput(''); setVerificationCode(''); setShowVerification(false); setFormData({...formData,identifier:v}); };
+    const handleVerificationInput = v => { setVerificationInput(v.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6)); };
+
+    const validatePw = p => p.length>=8&&/[A-Z]/.test(p)&&/[a-z]/.test(p)&&/[0-9]/.test(p)&&/[^A-Za-z0-9]/.test(p);
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError(''); setSuccess('');
+      const identifierType = detectType(formData.identifier);
+      if (!identifierType || !formData.password) {
+        setError('Use a 10-digit phone number or a valid email, plus password.');
+        setVerificationInput(''); setVerificationCode(''); setShowVerification(false);
+        return;
+      }
+      if (!isLogin && !validatePw(formData.password)) {
+        setError('Password does not meet all requirements.');
+        return;
+      }
+      if (!showVerification) { resetVerification(); setShowVerification(true); return; }
+      if (verificationInput.trim().toUpperCase() !== verificationCode.toUpperCase()) {
+        setError('Verification code did not match. Please try again.');
+        setVerificationInput(''); setVerificationCode(''); setShowVerification(false);
+        return;
+      }
+      const rawId = formData.identifier.trim();
+      const normalizedId = identifierType === 'phone' ? normalizePhone(rawId) : rawId;
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const body = isLogin
+        ? { identifier: normalizedId, identifierType, password: formData.password }
+        : { username: formData.username, identifier: normalizedId, identifierType, password: formData.password };
+      try {
+        const res = await fetch(`${API_URL}${endpoint}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          setSuccess(isLogin ? 'Login successful!' : 'Account created!');
+          setTimeout(() => onLogin(data.user), 500);
+        } else {
+          setError(data.error || 'An error occurred');
+          setVerificationInput(''); setVerificationCode(''); setShowVerification(false);
         }
-        return `${raw.slice(0, 3)}-${raw.slice(3)}`;
-      };
-      const resetVerificationCode = () => {
-        setVerificationCode(generateVerificationCode());
-        setVerificationInput('');
-      };
+      } catch { setError('Server connection error.'); }
+    };
 
-      const handleIdentifierChange = (value) => {
-        setVerificationInput('');
-        setVerificationCode('');
-        setShowVerification(false);
-        setFormData({ ...formData, identifier: value });
-      };
+    const handleForgotPassword = async () => {
+      if (!forgotId.trim()) { setForgotMsg({ type:'error', text:'Please enter your email or phone.' }); return; }
+      setForgotLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/auth/forgot-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ identifier: forgotId.trim() }) });
+        const data = await res.json();
+        setForgotMsg({ type: res.ok ? 'success' : 'error', text: data.message || data.error });
+      } catch { setForgotMsg({ type:'error', text:'Server error. Please try again.' }); }
+      finally { setForgotLoading(false); }
+    };
 
-      const normalizePhoneIdentifier = (value = '') => {
-        const digits = String(value).replace(/\D/g, '');
-        if (digits.length === 11 && digits.startsWith('1')) {
-          return digits.slice(1);
-        }
-        return digits;
-      };
+    const switchMode = () => { setIsLogin(!isLogin); setFormData({username:'',identifier:'',password:''}); setVerificationInput(''); setVerificationCode(''); setShowVerification(false); setError(''); setSuccess(''); };
 
-      const detectIdentifierType = (value = '') => {
-        const trimmed = value.trim();
-        if (trimmed.includes('@')) {
-          return 'email';
-        }
-        const normalizedPhone = normalizePhoneIdentifier(trimmed);
-        if (/^\d{10}$/.test(normalizedPhone)) {
-          return 'phone';
-        }
-        return null;
-      };
-
-      const handleVerificationInputChange = (value) => {
-        const cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
-        const formatted =
-          cleaned.length > 3 ? `${cleaned.slice(0, 3)}-${cleaned.slice(3)}` : cleaned;
-        setVerificationInput(formatted);
-      };
-
-      const buildLoginPayload = () => {
-        const identifierValue = formData.identifier.trim();
-        const identifierType = detectIdentifierType(identifierValue);
-        const normalizedIdentifier =
-          identifierType === 'phone'
-            ? normalizePhoneIdentifier(identifierValue)
-            : identifierValue;
-        return {
-          identifier: normalizedIdentifier,
-          identifierType,
-          password: formData.password
-        };
-      };
-
-      const buildRegisterPayload = () => {
-        const identifierValue = formData.identifier.trim();
-        const identifierType = detectIdentifierType(identifierValue);
-        const normalizedIdentifier =
-          identifierType === 'phone'
-            ? normalizePhoneIdentifier(identifierValue)
-            : identifierValue;
-        return {
-          username: formData.username,
-          identifier: normalizedIdentifier,
-          identifierType,
-          password: formData.password
-        };
-      };
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-        const identifierType = detectIdentifierType(formData.identifier);
-
-        if (!identifierType || !formData.password) {
-          setError('Use a 10-digit phone number or a valid email, plus password.');
-          setVerificationInput('');
-          setVerificationCode('');
-          setShowVerification(false);
-          return;
-        }
-
-        if (!showVerification) {
-          resetVerificationCode();
-          setShowVerification(true);
-          return;
-        }
-
-        if (verificationInput.trim().toUpperCase() !== verificationCode) {
-          setError('Request denied: verification code did not match.');
-          setVerificationInput('');
-          setVerificationCode('');
-          setShowVerification(false);
-          return;
-        }
-
-        const endpoint = isLogin ? '/auth/login' : '/auth/register';
-        const body = isLogin
-          ? buildLoginPayload()
-          : buildRegisterPayload();
-
-        try {
-          const response = await fetch(`${API_URL}${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            setSuccess(isLogin ? 'Login successful!' : 'Account created!');
-            setTimeout(() => onLogin(data.user), 500);
-          } else {
-            setError(data.error || 'An error occurred');
-          }
-        } catch (err) {
-          setError('Server connection error. Make sure the backend is running.');
-        }
-      };
-
-      return (
-        <div className="auth-container">
-          <div className="auth-box">
-            <h2>{isLogin ? 'Login' : 'Create Account'}</h2>
-            {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">{success}</div>}
-            <form onSubmit={handleSubmit}>
-              {!isLogin && (
-                <div className="form-group">
-                  <label>Username</label>
-                  <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} required />
-                </div>
-              )}
+    if (showForgot) return (
+      <div className="auth-container">
+        <div className="auth-box">
+          <h2>🔑 Forgot Password</h2>
+          {forgotMsg && <div className={forgotMsg.type==='error'?'error-message':'success-message'}>{forgotMsg.text}</div>}
+          {!forgotMsg?.type || forgotMsg.type === 'error' ? (
+            <>
+              <p style={{color:'#666',fontSize:'14px',marginBottom:'16px'}}>Enter your email or phone. A reset request will be sent to the administrator who will provide you with a temporary password.</p>
               <div className="form-group">
                 <label>Email or Phone</label>
-                <input
-                  type="text"
-                  placeholder="name@example.com or 1234567890"
-                  value={formData.identifier}
-                  onChange={(e) => handleIdentifierChange(e.target.value)}
-                  required
-                />
+                <input type="text" value={forgotId} onChange={e => setForgotId(e.target.value)} placeholder="name@example.com or 1234567890" />
               </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => {
-                    setVerificationInput('');
-                    setVerificationCode('');
-                    setShowVerification(false);
-                    setFormData({...formData, password: e.target.value});
-                  }}
-                  required
-                />
-              </div>
-              {showVerification && (
-                <div className="form-group">
-                  <label>Verification Code</label>
-                  <div style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '2px', marginBottom: '8px' }}>
-                    {verificationCode}
-                  </div>
-                  <input
-                    type="text"
-                    maxLength="7"
-                    placeholder="Enter code above"
-                    value={verificationInput}
-                    onChange={(e) => handleVerificationInputChange(e.target.value)}
-                    style={{ textTransform: 'uppercase' }}
-                    required
-                  />
-                </div>
-              )}
-              <button type="submit" className="btn">{isLogin ? 'Login' : 'Sign Up'}</button>
-            </form>
-            <div className="auth-switch">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <a onClick={() => {
-                setIsLogin(!isLogin);
-                setFormData({ username: '', identifier: '', password: '' });
-                setVerificationInput('');
-                setVerificationCode('');
-                setShowVerification(false);
-              }}>{isLogin ? 'Sign Up' : 'Login'}</a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // User Profile Modal
-    function UserProfileModal({ user, onClose, inactivityTimeout, setInactivityTimeout }) {
-      const [localTimeout, setLocalTimeout] = useState(inactivityTimeout);
-
-      const handleSave = () => {
-        setInactivityTimeout(localTimeout);
-        localStorage.setItem('inactivityTimeout', localTimeout);
-        alert('Settings saved! Timer has been reset.');
-        onClose();
-      };
-
-      return (
-        <div className="modal-overlay" onClick={onClose}>
-          <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>👤 User Profile</h3>
-            
-            <div className="profile-section">
-              <h4>Account Information</h4>
-              <div className="profile-info">
-                <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Email/Phone Number:</strong> {user.email || user.phone || 'Not provided'}</p>
-                <p><strong>User ID:</strong> {user.id}</p>
-              </div>
-            </div>
-
-            <div className="profile-section">
-              <h4>Security Settings</h4>
-              <div className="profile-info">
-                <p><strong>Auto-logout Settings</strong></p>
-                <p style={{fontSize: '14px', color: '#666', marginTop: '5px'}}>
-                  Automatically log out after period of inactivity
-                </p>
-                <div className="timeout-setting">
-                  <input 
-                    type="number" 
-                    min="1" 
-                    max="120"
-                    value={localTimeout}
-                    onChange={(e) => setLocalTimeout(parseInt(e.target.value) || 1)}
-                  />
-                  <span>minute(s)</span>
-                </div>
-                <div className="inactivity-warning">
-                  ⚠️ You will be logged out after {localTimeout} minute(s) of inactivity
-                </div>
-                <p style={{fontSize: '13px', color: '#666', marginTop: '10px'}}>
-                  💡 Tip: Any mouse movement, click, or keyboard action will reset the timer
-                </p>
-              </div>
-            </div>
-
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-              <button className="btn" onClick={handleSave}>Save Settings</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Add Device Modal
-    function AddDeviceModal({ onClose, onAdd }) {
-      const [formData, setFormData] = useState({ device_name: '', device_type: 'Temperature', device_id: '' });
-      const [error, setError] = useState('');
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/devices`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(formData)
-          });
-          const data = await response.json();
-          if (response.ok) {
-            onAdd(data.device);
-            onClose();
-          } else {
-            setError(data.error);
-          }
-        } catch (err) {
-          setError('Failed to add device');
-        }
-      };
-
-      return (
-        <div className="modal-overlay" onClick={onClose}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Add New Device</h3>
-            {error && <div className="error-message">{error}</div>}
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Device Name</label>
-                <input type="text" value={formData.device_name} onChange={(e) => setFormData({...formData, device_name: e.target.value})} placeholder="Living Room Sensor" required />
-              </div>
-              <div className="form-group">
-                <label>Device Type</label>
-                <select value={formData.device_type} onChange={(e) => setFormData({...formData, device_type: e.target.value})}>
-                  <option>Temperature</option>
-                  <option>Humidity</option>
-                  <option>Environmental</option>
-                  <option>Motion</option>
-                  <option>Light</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Device ID</label>
-                <input type="text" value={formData.device_id} onChange={(e) => setFormData({...formData, device_id: e.target.value})} placeholder="SENSOR001" required />
-              </div>
-              <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                <button type="submit" className="btn">Add Device</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // Device Card
-    function DeviceCard({ device, onDelete, onGenerateData }) {
-      const [sensorData, setSensorData] = useState(null);
-      const [loading, setLoading] = useState(false);
-
-      useEffect(() => {
-        fetchSensorData();
-        const interval = setInterval(fetchSensorData, 10000);
-        return () => clearInterval(interval);
-      }, [device.device_id]);
-
-      const fetchSensorData = async () => {
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/sensor-data/${device.device_id}?limit=1`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (response.ok) {
-            const data = await response.json();
-            if (data.length > 0) setSensorData(data[0]);
-          }
-        } catch (err) {
-          console.error('Error fetching sensor data:', err);
-        }
-      };
-
-      const handleGenerateData = async () => {
-        setLoading(true);
-        try {
-          const token = localStorage.getItem('token');
-          await fetch(`${API_URL}/demo/generate-data/${device.device_id}`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          setTimeout(fetchSensorData, 500);
-          onGenerateData();
-        } catch (err) {
-          console.error('Error:', err);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      return (
-        <div className="device-card">
-          <div className="device-header">
-            <div className="device-info">
-              <h3>{device.device_name}</h3>
-              <div className="device-type">{device.device_type} • {device.device_id}</div>
-            </div>
-            <span className="device-status">{device.status}</span>
-          </div>
-          {sensorData && (
-            <div className="sensor-readings">
-              <div className="reading">
-                <span className="reading-label">🌡️ Temperature</span>
-                <span className="reading-value">{sensorData.temperature}°C</span>
-              </div>
-              <div className="reading">
-                <span className="reading-label">💧 Humidity</span>
-                <span className="reading-value">{sensorData.humidity}%</span>
-              </div>
-              <div className="reading">
-                <span className="reading-label">📊 Pressure</span>
-                <span className="reading-value">{sensorData.pressure} hPa</span>
-              </div>
-              <div className="reading">
-                <span className="reading-label">⏰ Last Update</span>
-                <span className="reading-value">{new Date(sensorData.timestamp).toLocaleTimeString()}</span>
-              </div>
-            </div>
+              <button className="btn" onClick={handleForgotPassword} disabled={forgotLoading}>{forgotLoading ? 'Sending...' : 'Send Reset Request'}</button>
+            </>
+          ) : (
+            <p style={{color:'#555',fontSize:'14px'}}>Contact the administrator at <strong>truhoang1711@gmail.com</strong> to get your temporary password, then log in and set a new one.</p>
           )}
-          <div className="device-actions">
-            <button className="btn btn-success" onClick={handleGenerateData} disabled={loading}>
-              {loading ? 'Generating...' : 'Generate Data'}
-            </button>
-            <button className="btn btn-danger" onClick={() => onDelete(device.id)}>Delete</button>
+          <div style={{textAlign:'center',marginTop:'16px'}}>
+            <button className="auth-link" onClick={() => { setShowForgot(false); setForgotMsg(null); setForgotId(''); }}>← Back to Login</button>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
 
-    // Dashboard
-    function Dashboard({ user, onLogout }) {
-      const [devices, setDevices] = useState([]);
-      const [showAddModal, setShowAddModal] = useState(false);
-      const [showProfileModal, setShowProfileModal] = useState(false);
-      const [inactivityTimeout, setInactivityTimeout] = useState(() => {
-        const saved = localStorage.getItem('inactivityTimeout');
-        return saved ? parseInt(saved) : 1; // Default 1 minute for testing
-      });
-
-      // Auto-logout with countdown
-      const secondsLeft = useInactivityTimer(inactivityTimeout, () => {
-        alert(`You have been logged out due to ${inactivityTimeout} minute(s) of inactivity.`);
-        onLogout();
-      });
-
-      useEffect(() => {
-        fetchDevices();
-      }, []);
-
-      const fetchDevices = async () => {
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/devices`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setDevices(data);
-          }
-        } catch (err) {
-          console.error('Error fetching devices:', err);
-        }
-      };
-
-      const handleAddDevice = (newDevice) => {
-        setDevices([...devices, newDevice]);
-      };
-
-      const handleDeleteDevice = async (deviceId) => {
-        if (!confirm('Are you sure you want to delete this device?')) return;
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/devices/${deviceId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (response.ok) {
-            setDevices(devices.filter(d => d.id !== deviceId));
-          }
-        } catch (err) {
-          console.error('Error deleting device:', err);
-        }
-      };
-
-      return (
-        <>
-          <nav className="navbar">
-            <h1>🔌 Sensor Integration System</h1>
-            <div className="navbar-right">
-              <span className="user-info">Welcome, {user.username}!</span>
-              <button className="profile-btn" onClick={() => setShowProfileModal(true)}>👤 Profile</button>
-              <button className="logout-btn" onClick={onLogout}>Logout</button>
-            </div>
-          </nav>
-          <div className="dashboard">
-            <div className="dashboard-header">
-              <h2>My Devices</h2>
-              <button className="add-device-btn" onClick={() => setShowAddModal(true)}>➕ Add Device</button>
-            </div>
-            {devices.length === 0 ? (
-              <div className="empty-state">
-                <h3>No devices yet</h3>
-                <p>Click "Add Device" to start tracking sensor data</p>
-              </div>
-            ) : (
-              <div className="devices-grid">
-                {devices.map(device => (
-                  <DeviceCard key={device.id} device={device} onDelete={handleDeleteDevice} onGenerateData={fetchDevices} />
-                ))}
+    return (
+      <div className="auth-container">
+        <div className="auth-box">
+          <h2>{isLogin ? 'Login' : 'Create Account'}</h2>
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          <form onSubmit={handleSubmit}>
+            {!isLogin && (
+              <div className="form-group">
+                <label>Username</label>
+                <input type="text" value={formData.username} onChange={e => setFormData({...formData,username:e.target.value})} required />
               </div>
             )}
+            <div className="form-group">
+              <label>Email or Phone</label>
+              <input type="text" placeholder="name@example.com or 1234567890" value={formData.identifier} onChange={e => handleIdentifierChange(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <div style={{position:'relative'}}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={e => { setVerificationInput(''); setVerificationCode(''); setShowVerification(false); setFormData({...formData,password:e.target.value}); }}
+                  style={{paddingRight:'42px'}}
+                  required
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{position:'absolute',right:'10px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:'18px',color:'#888'}}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+              {!isLogin && <PwRequirements password={formData.password} />}
+            </div>
+            {showVerification && (
+              <div className="form-group">
+                <label>Enter this verification code:</label>
+                <div className="verify-boxes">
+                  {verificationCode.split('').map((ch, i) => <span key={i} className="verify-box">{ch}</span>)}
+                </div>
+                <input type="text" maxLength="6" placeholder="Type the 6 characters above" value={verificationInput}
+                  onChange={e => handleVerificationInput(e.target.value)} style={{textTransform:'uppercase',letterSpacing:'4px',fontFamily:'monospace',fontSize:'18px'}} required />
+              </div>
+            )}
+            <button type="submit" className="btn">{isLogin ? 'Login' : 'Sign Up'}</button>
+          </form>
+          <div className="auth-switch">
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <a onClick={switchMode}>{isLogin ? 'Sign Up' : 'Login'}</a>
+          </div>
+          {isLogin && (
+            <div style={{textAlign:'center',marginTop:'12px'}}>
+              <button className="auth-link" onClick={() => setShowForgot(true)}>Forgot your password?</button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== FORCE CHANGE PASSWORD MODAL =====
+  function ForceChangePasswordModal({ onSuccess, onLogout }) {
+    const [password, setPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
+    const [showPw, setShowPw] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const allMet = password.length>=8&&/[A-Z]/.test(password)&&/[a-z]/.test(password)&&/[0-9]/.test(password)&&/[^A-Za-z0-9]/.test(password);
+
+    const handleSubmit = async () => {
+      if (!allMet) { setError('Password does not meet all requirements.'); return; }
+      if (password !== confirm) { setError('Passwords do not match.'); return; }
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/account/change-password`, { method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body:JSON.stringify({newPassword:password}) });
+      const data = await res.json();
+      if (res.ok) { setSuccess('Password changed! Redirecting...'); setTimeout(onSuccess, 1500); }
+      else setError(data.error);
+    };
+
+    return (
+      <div className="modal-overlay">
+        <div className="modal">
+          <h3>🔐 Set a New Password</h3>
+          <p style={{color:'#666',fontSize:'14px',marginBottom:'14px'}}>Your account was given a temporary password. You must create a new one to continue.</p>
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          <div className="form-group">
+            <label>New Password</label>
+            <div style={{position:'relative'}}>
+              <input type={showPw?'text':'password'} value={password} onChange={e=>{setPassword(e.target.value);setError('');}} style={{paddingRight:'42px'}} />
+              <button type="button" onClick={()=>setShowPw(!showPw)} style={{position:'absolute',right:'10px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:'18px'}}>
+                {showPw?'🙈':'👁️'}
+              </button>
+            </div>
+            <PwRequirements password={password} />
+          </div>
+          <div className="form-group">
+            <label>Confirm Password</label>
+            <input type={showPw?'text':'password'} value={confirm} onChange={e=>{setConfirm(e.target.value);setError('');}} />
+            {confirm && password !== confirm && <p style={{color:'#dc3545',fontSize:'12px',marginTop:'4px'}}>Passwords do not match</p>}
+          </div>
+          <div className="modal-actions">
+            <button className="btn btn-grey" onClick={onLogout}>Logout Instead</button>
+            <button className="btn" onClick={handleSubmit} disabled={!allMet||password!==confirm}>Set New Password</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== DEACTIVATE ACCOUNT MODAL =====
+  function DeactivateAccountModal({ onClose, onConfirm }) {
+    const [typed, setTyped] = useState('');
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal" onClick={e=>e.stopPropagation()}>
+          <h3>⚠️ Deactivate Your Account</h3>
+          <p style={{color:'#555',fontSize:'14px',marginBottom:'10px'}}>Your account will be <strong>temporarily deactivated</strong>. If not reactivated within <strong>2 months</strong>, all your data will be <strong>permanently deleted</strong>.</p>
+          <ul style={{fontSize:'13px',color:'#888',marginBottom:'16px',paddingLeft:'18px',lineHeight:'1.8'}}>
+            <li>You will be logged out immediately</li>
+            <li>Your devices and sensor data are preserved for 2 months</li>
+            <li>Contact the admin to reactivate before the deadline</li>
+            <li>After 2 months — account and all data is gone forever</li>
+          </ul>
+          <div className="form-group">
+            <label>Type <strong>DEACTIVATE</strong> to confirm</label>
+            <input type="text" value={typed} onChange={e=>setTyped(e.target.value.toUpperCase())} placeholder="DEACTIVATE" style={{letterSpacing:'2px'}} />
+          </div>
+          <div className="modal-actions">
+            <button className="btn btn-grey" onClick={onClose}>Cancel</button>
+            <button className="btn btn-danger" disabled={typed!=='DEACTIVATE'} onClick={onConfirm}>Deactivate My Account</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== RESET PASSWORD MODAL =====
+  function ResetPasswordModal({ result, onClose }) {
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => { navigator.clipboard.writeText(result.tempPassword); setCopied(true); setTimeout(()=>setCopied(false),2000); };
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal" onClick={e=>e.stopPropagation()}>
+          <h3>🔑 Password Reset Successful</h3>
+          <p style={{color:'#555',fontSize:'14px',marginBottom:'5px'}}>Temporary password for <strong>{result.username}</strong>:</p>
+          <div className="temp-password-box" onClick={handleCopy}>{result.tempPassword}</div>
+          <p className="copy-hint">Click the box or button below to copy</p>
+          <p style={{fontSize:'13px',color:'#dc3545',margin:'12px 0'}}>⚠️ {result.note}</p>
+          <div className="modal-actions">
+            <button className="btn" onClick={handleCopy}>{copied?'✅ Copied!':'📋 Copy Password'}</button>
+            <button className="btn btn-danger" onClick={onClose}>Close</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== PROFILE MODAL =====
+  function UserProfileModal({ user, onClose, inactivityTimeout, setInactivityTimeout, onDeactivate }) {
+    const [localTimeout, setLocalTimeout] = useState(inactivityTimeout);
+    const handleSave = () => { setInactivityTimeout(localTimeout); localStorage.setItem('inactivityTimeout', localTimeout); alert('Settings saved!'); onClose(); };
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="profile-modal" onClick={e=>e.stopPropagation()}>
+          <h3>👤 User Profile</h3>
+          <div className="profile-section">
+            <h4>Account Information</h4>
+            <div className="profile-info">
+              <p><strong>Username:</strong> {user.username}</p>
+              <p><strong>Email / Phone:</strong> {user.email || user.phone || 'Not provided'}</p>
+              <p><strong>User ID:</strong> {user.id}</p>
+              <p><strong>Role:</strong> {user.is_admin ? '🛠 Admin' : 'User'}</p>
+            </div>
+          </div>
+          <div className="profile-section">
+            <h4>Security Settings</h4>
+            <div className="profile-info">
+              <p style={{fontWeight:600,color:'#333'}}>Auto-logout after inactivity</p>
+              <div className="timeout-setting">
+                <input type="number" min="1" max="120" value={localTimeout} onChange={e=>setLocalTimeout(parseInt(e.target.value)||1)} />
+                <span style={{color:'#555'}}>minute(s)</span>
+              </div>
+              <div className="inactivity-warning">⚠️ Auto-logout after {localTimeout} minute(s) of inactivity</div>
+            </div>
+          </div>
+          <div className="profile-section">
+            <h4>Danger Zone</h4>
+            <div className="danger-zone">
+              <p>⚠️ <strong>Deactivating your account</strong> will schedule it for permanent deletion after 2 months. You will be logged out immediately.</p>
+              <button className="btn btn-danger" style={{fontSize:'13px',padding:'8px 14px',width:'auto'}} onClick={() => { onClose(); onDeactivate(); }}>
+                Deactivate My Account
+              </button>
+            </div>
+          </div>
+          <div className="modal-actions">
+            <button className="btn btn-grey" onClick={onClose}>Cancel</button>
+            <button className="btn" onClick={handleSave}>Save Settings</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== ADD DEVICE MODAL =====
+  function AddDeviceModal({ onClose, onAdd }) {
+    const [formData, setFormData] = useState({ device_name:'', device_type:'Temperature', device_id:'' });
+    const [error, setError] = useState('');
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/devices`, { method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify(formData) });
+        const data = await res.json();
+        if (res.ok) { onAdd(data.device); onClose(); } else setError(data.error);
+      } catch { setError('Failed to add device'); }
+    };
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal" onClick={e=>e.stopPropagation()}>
+          <h3>Add New Device</h3>
+          {error && <div className="error-message">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="form-group"><label>Device Name</label><input type="text" value={formData.device_name} onChange={e=>setFormData({...formData,device_name:e.target.value})} placeholder="Living Room Sensor" required /></div>
+            <div className="form-group"><label>Device Type</label><select value={formData.device_type} onChange={e=>setFormData({...formData,device_type:e.target.value})}><option>Temperature</option><option>Humidity</option><option>Environmental</option><option>Motion</option><option>Light</option></select></div>
+            <div className="form-group"><label>Device ID</label><input type="text" value={formData.device_id} onChange={e=>setFormData({...formData,device_id:e.target.value})} placeholder="SENSOR001" required /></div>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-grey" onClick={onClose}>Cancel</button>
+              <button type="submit" className="btn">Add Device</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== DEVICE CARD =====
+  function DeviceCard({ device, onDelete, onGenerateData }) {
+    const [sensorData, setSensorData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => { fetchData(); const t = setInterval(fetchData, 10000); return () => clearInterval(t); }, [device.device_id]);
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/sensor-data/${device.device_id}?limit=1`, { headers:{Authorization:`Bearer ${token}`} });
+        if (res.ok) { const d = await res.json(); if(d.length>0) setSensorData(d[0]); }
+      } catch {}
+    };
+    const handleGenerate = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${API_URL}/demo/generate-data/${device.device_id}`, { method:'POST', headers:{Authorization:`Bearer ${token}`} });
+        setTimeout(fetchData, 500); onGenerateData();
+      } catch {} finally { setLoading(false); }
+    };
+    return (
+      <div className="device-card">
+        <div className="device-header">
+          <div className="device-info"><h3>{device.device_name}</h3><div className="device-type">{device.device_type} • {device.device_id}</div></div>
+          <span className="device-status">{device.status}</span>
+        </div>
+        {sensorData && (
+          <div className="sensor-readings">
+            <div className="reading"><span className="reading-label">🌡️ Temperature</span><span className="reading-value">{sensorData.temperature}°C</span></div>
+            <div className="reading"><span className="reading-label">💧 Humidity</span><span className="reading-value">{sensorData.humidity}%</span></div>
+            <div className="reading"><span className="reading-label">📊 Pressure</span><span className="reading-value">{sensorData.pressure} hPa</span></div>
+            <div className="reading"><span className="reading-label">⏰ Last Update</span><span className="reading-value">{new Date(sensorData.timestamp).toLocaleTimeString()}</span></div>
+          </div>
+        )}
+        <div className="device-actions">
+          <button className="btn btn-success" onClick={handleGenerate} disabled={loading}>{loading?'Generating...':'Generate Data'}</button>
+          <button className="btn btn-danger" onClick={() => onDelete(device.id)}>Delete</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== DASHBOARD =====
+  function Dashboard({ user, onLogout, showDeactivateModal, setShowDeactivateModal }) {
+    const [devices, setDevices] = useState([]);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [activeTab, setActiveTab] = useState('devices');
+    const [adminUsers, setAdminUsers] = useState([]);
+    const [adminStats, setAdminStats] = useState(null);
+    const [activityLogs, setActivityLogs] = useState([]);
+    const [adminLoading, setAdminLoading] = useState(false);
+    const [expandedUserId, setExpandedUserId] = useState(null);
+    const [userDetails, setUserDetails] = useState({});
+    const [resetPasswordResult, setResetPasswordResult] = useState(null);
+    const [inactivityTimeout, setInactivityTimeout] = useState(() => parseInt(localStorage.getItem('inactivityTimeout') || '1'));
+
+    const secondsLeft = useInactivityTimer(inactivityTimeout, () => {
+      alert(`Logged out after ${inactivityTimeout} minute(s) of inactivity.`);
+      onLogout();
+    });
+
+    useEffect(() => { fetchDevices(); }, []);
+    useEffect(() => { if (activeTab === 'admin') fetchAdminData(); }, [activeTab]);
+
+    const fetchDevices = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/devices`, { headers:{Authorization:`Bearer ${token}`} });
+        if (res.ok) setDevices(await res.json());
+      } catch {}
+    };
+
+    const fetchAdminData = async () => {
+      if (!user.is_admin) return;
+      setAdminLoading(true);
+      const token = localStorage.getItem('token');
+      try {
+        const [uRes, sRes, lRes] = await Promise.all([
+          fetch(`${API_URL}/admin/users`, { headers:{Authorization:`Bearer ${token}`} }),
+          fetch(`${API_URL}/admin/stats`, { headers:{Authorization:`Bearer ${token}`} }),
+          fetch(`${API_URL}/admin/activity-logs?limit=50`, { headers:{Authorization:`Bearer ${token}`} })
+        ]);
+        if (uRes.ok) setAdminUsers(await uRes.json());
+        if (sRes.ok) setAdminStats(await sRes.json());
+        if (lRes.ok) setActivityLogs(await lRes.json());
+      } catch {} finally { setAdminLoading(false); }
+    };
+
+    async function fetchUserDetails(userId) {
+      if (expandedUserId === userId) { setExpandedUserId(null); return; }
+      if (userDetails[userId]) { setExpandedUserId(userId); return; }
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/admin/users/${userId}/details`, { headers:{Authorization:`Bearer ${token}`} });
+      if (res.ok) { const d = await res.json(); setUserDetails(p=>({...p,[userId]:d})); setExpandedUserId(userId); }
+    }
+
+    async function toggleActive(userId) {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/admin/users/${userId}/toggle-active`, { method:'PATCH', headers:{Authorization:`Bearer ${token}`} });
+      if (!res.ok) { const d = await res.json(); alert('Error: '+d.error); return; }
+      fetchAdminData();
+    }
+
+    async function unlockUser(userId) {
+      const token = localStorage.getItem('token');
+      await fetch(`${API_URL}/admin/users/${userId}/unlock`, { method:'PATCH', headers:{Authorization:`Bearer ${token}`} });
+      fetchAdminData();
+    }
+
+    async function resetPassword(userId) {
+      if (!confirm("Reset this user's password?")) return;
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/admin/users/${userId}/reset-password`, { method:'POST', headers:{Authorization:`Bearer ${token}`} });
+      if (res.ok) setResetPasswordResult(await res.json());
+      else { const d = await res.json(); alert('Error: '+d.error); }
+    }
+
+    async function deleteUser(userId) {
+      if (!confirm('PERMANENTLY delete this user and ALL their data?')) return;
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/admin/users/${userId}/permanent-delete`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} });
+      if (res.ok) fetchAdminData();
+      else { const d = await res.json(); alert('Error: '+d.error); }
+    }
+
+    const handleDeleteDevice = async (deviceId) => {
+      if (!confirm('Delete this device?')) return;
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/devices/${deviceId}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} });
+      if (res.ok) setDevices(devices.filter(d=>d.id!==deviceId));
+    };
+
+    function getActionBadge(action='') {
+      const a=action.toLowerCase();
+      if(a.includes('disable'))return'badge-action-disable';
+      if(a.includes('enable'))return'badge-action-enable';
+      if(a.includes('delete'))return'badge-action-delete';
+      if(a.includes('reset'))return'badge-action-reset';
+      if(a.includes('unlock'))return'badge-action-unlock';
+      return'badge-action-other';
+    }
+
+    return (
+      <>
+        <nav className="navbar">
+          <h1>🔌 Sensor Integration System</h1>
+          <div className="navbar-right">
+            <span style={{color:'#555',fontWeight:500,fontSize:'14px'}}>Welcome, {user.username}</span>
+            <button className="profile-btn" onClick={()=>setShowProfileModal(true)}>👤 Profile</button>
+            {user.is_admin===1 && <button className="admin-btn" onClick={()=>setActiveTab('admin')}>🛠 Admin</button>}
+            <button className="logout-btn" onClick={onLogout}>Logout</button>
+          </div>
+        </nav>
+
+        <div className="dashboard">
+          <div className="tab-bar">
+            <button className={`tab-btn ${activeTab==='devices'?'active':''}`} onClick={()=>setActiveTab('devices')}>📡 My Devices</button>
+            {user.is_admin===1 && <button className={`tab-btn admin-tab ${activeTab==='admin'?'active':''}`} onClick={()=>setActiveTab('admin')}>🛠 Admin Panel</button>}
           </div>
 
-          {/* Countdown Timer Display */}
-          <CountdownTimer secondsLeft={secondsLeft} totalMinutes={inactivityTimeout} />
-
-          {showAddModal && <AddDeviceModal onClose={() => setShowAddModal(false)} onAdd={handleAddDevice} />}
-          {showProfileModal && (
-            <UserProfileModal 
-              user={user} 
-              onClose={() => setShowProfileModal(false)}
-              inactivityTimeout={inactivityTimeout}
-              setInactivityTimeout={setInactivityTimeout}
-            />
+          {/* DEVICES TAB */}
+          {activeTab==='devices' && (
+            <>
+              <div className="dashboard-header">
+                <h2>My Devices</h2>
+                <button className="add-device-btn" onClick={()=>setShowAddModal(true)}>➕ Add Device</button>
+              </div>
+              {devices.length===0
+                ? <div className="empty-state"><h3>No devices yet</h3><p>Add a device to start collecting data</p></div>
+                : <div className="devices-grid">{devices.map(d=><DeviceCard key={d.id} device={d} onDelete={handleDeleteDevice} onGenerateData={fetchDevices}/>)}</div>
+              }
+            </>
           )}
-        </>
-      );
-    }
 
-    // Main App
-    function App() {
-      const [user, setUser] = useState(null);
-      const [loading, setLoading] = useState(true);
+          {/* ADMIN TAB */}
+          {activeTab==='admin' && user.is_admin===1 && (
+            <div>
+              <h2 style={{color:'white',marginBottom:'20px'}}>🛠 Admin Dashboard</h2>
+              {adminLoading && <p style={{color:'white'}}>Loading...</p>}
 
-      useEffect(() => {
-        const token = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        if (token && savedUser) {
-          setUser(JSON.parse(savedUser));
-        }
-        setLoading(false);
-      }, []);
+              {adminStats && (
+                <div className="stats-grid">
+                  <div className="stat-card"><div className="stat-value">{adminStats.totalUsers}</div><div className="stat-label">Total Users</div></div>
+                  <div className="stat-card"><div className="stat-value">{adminStats.totalDevices}</div><div className="stat-label">Total Devices</div></div>
+                  <div className="stat-card"><div className="stat-value">{adminStats.totalReadings}</div><div className="stat-label">Total Readings</div></div>
+                  <div className="stat-card"><div className="stat-value">{adminStats.newUsersToday}</div><div className="stat-label">New Today</div></div>
+                  <div className="stat-card"><div className="stat-value" style={{color:'#e74c3c'}}>{adminStats.lockedAccounts}</div><div className="stat-label">Locked Accounts</div></div>
+                  <div className="stat-card"><div className="stat-value" style={{color:'#f39c12'}}>{adminStats.deactivatedAccounts}</div><div className="stat-label">Self-Deactivated</div></div>
+                </div>
+              )}
 
-      const handleLogin = (userData) => {
-        setUser(userData);
-      };
+              {/* USER TABLE */}
+              <div className="sa-section">
+                <h3>👥 User Management <span style={{fontSize:'13px',fontWeight:400,opacity:0.8}}>(click row for details)</span></h3>
+                <div className="device-card" style={{padding:0,overflow:'hidden'}}>
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>User</th><th>Contact</th><th>Role</th><th>Status</th><th>Devices</th><th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adminUsers.map(u => (
+                        <React.Fragment key={u.id}>
+                          <tr
+                            className={`clickable-row ${u.is_active===0?'disabled-row':''} ${u.is_locked===1?'locked-row':''}`}
+                            onClick={()=>fetchUserDetails(u.id)}
+                          >
+                            <td>
+                              <strong>{u.username}</strong>
+                              <div style={{fontSize:'11px',color:'#aaa'}}>ID: {u.id}</div>
+                            </td>
+                            <td style={{color:'#666'}}>{u.email||u.phone||'—'}</td>
+                            <td><span className={`badge ${u.is_admin?'badge-admin':'badge-user'}`}>{u.is_admin?'Admin':'User'}</span></td>
+                            <td>
+                              {u.is_active===0
+                                ? <span className="badge badge-disabled">Disabled</span>
+                                : u.is_locked===1
+                                  ? <span className="badge badge-locked">🔒 Locked</span>
+                                  : <span className="badge badge-active">Active</span>
+                              }
+                            </td>
+                            <td style={{color:'#888'}}>{u.device_count}</td>
+                            <td onClick={e=>e.stopPropagation()}>
+                              <button className="sa-btn sa-btn-info" onClick={()=>resetPassword(u.id)}>🔑 Reset PW</button>
+                              {u.is_locked===1 && <button className="sa-btn sa-btn-secondary" onClick={()=>unlockUser(u.id)}>🔓 Unlock</button>}
+                              <button className={`sa-btn ${u.is_active===0?'sa-btn-success':'sa-btn-warning'}`} onClick={()=>toggleActive(u.id)}>
+                                {u.is_active===0?'✅ Enable':'⛔ Disable'}
+                              </button>
+                              {parseInt(u.id)!==user.id && <button className="sa-btn sa-btn-danger" onClick={()=>deleteUser(u.id)}>🗑 Delete</button>}
+                            </td>
+                          </tr>
+                          {expandedUserId===u.id && userDetails[u.id] && (
+                            <tr className="expanded-detail">
+                              <td colSpan="6">
+                                <strong style={{color:'#667eea',display:'block',marginBottom:'10px'}}>📋 Details — {userDetails[u.id].username}</strong>
+                                <div className="detail-grid">
+                                  <div className="detail-field">Devices<strong>{userDetails[u.id].device_count}</strong></div>
+                                  <div className="detail-field">Total Readings<strong>{userDetails[u.id].reading_count}</strong></div>
+                                  <div className="detail-field">Joined<strong>{new Date(userDetails[u.id].created_at).toLocaleDateString()}</strong></div>
+                                  <div className="detail-field">Last Login<strong>{userDetails[u.id].last_login?new Date(userDetails[u.id].last_login).toLocaleString():'Never'}</strong></div>
+                                  <div className="detail-field">Failed Attempts<strong style={{color: userDetails[u.id].failed_attempts>0?'#e74c3c':'#333'}}>{userDetails[u.id].failed_attempts||0}</strong></div>
+                                  <div className="detail-field">Must Change PW<strong>{userDetails[u.id].must_change_password?'Yes':'No'}</strong></div>
+                                  {userDetails[u.id].disabled_at && <div className="detail-field">Disabled At<strong style={{color:'#dc3545'}}>{new Date(userDetails[u.id].disabled_at).toLocaleString()}</strong></div>}
+                                  {userDetails[u.id].disabled_by_username && <div className="detail-field">Disabled By<strong style={{color:'#dc3545'}}>{userDetails[u.id].disabled_by_username}</strong></div>}
+                                </div>
+                                <p style={{fontSize:'12px',color:'#aaa',marginTop:'6px'}}>👆 Click row again to collapse</p>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-      const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-      };
-
-      if (loading) return <div style={{color: 'white', textAlign: 'center', padding: '50px'}}>Loading...</div>;
-
-      return (
-        <div className="app-container">
-          {user ? <Dashboard user={user} onLogout={handleLogout} /> : <Auth onLogin={handleLogin} />}
+              {/* ACTIVITY LOGS */}
+              <div className="sa-section">
+                <h3>📋 Activity Logs</h3>
+                <div className="device-card" style={{padding:0,overflow:'hidden'}}>
+                  {activityLogs.length===0
+                    ? <p style={{color:'#aaa',padding:'24px',textAlign:'center'}}>No activity logged yet.</p>
+                    : <table className="log-table">
+                        <thead><tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th><th>IP</th></tr></thead>
+                        <tbody>
+                          {activityLogs.map(log => (
+                            <tr key={log.id}>
+                              <td style={{whiteSpace:'nowrap',fontSize:'12px',color:'#aaa'}}>{new Date(log.timestamp).toLocaleString()}</td>
+                              <td style={{fontWeight:600}}>{log.admin_username||'—'}</td>
+                              <td><span className={`badge ${getActionBadge(log.action)}`}>{log.action}</span></td>
+                              <td style={{color:'#666'}}>{log.target_username||'—'}</td>
+                              <td style={{fontSize:'12px',color:'#aaa'}}>{log.ip_address||'—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                  }
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      );
-    }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+        <CountdownTimer secondsLeft={secondsLeft} totalMinutes={inactivityTimeout} />
+
+        {showAddModal && <AddDeviceModal onClose={()=>setShowAddModal(false)} onAdd={d=>setDevices([...devices,d])} />}
+        {showProfileModal && <UserProfileModal user={user} onClose={()=>setShowProfileModal(false)} inactivityTimeout={inactivityTimeout} setInactivityTimeout={setInactivityTimeout} onDeactivate={()=>setShowDeactivateModal(true)} />}
+        {resetPasswordResult && <ResetPasswordModal result={resetPasswordResult} onClose={()=>setResetPasswordResult(null)} />}
+      </>
+    );
+  }
+
+  // ===== APP =====
+  function App() {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [mustChangePw, setMustChangePw] = useState(false);
+    const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      if (token && savedUser) {
+        const u = JSON.parse(savedUser);
+        setUser(u);
+        if (u.must_change_password) setMustChangePw(true);
+      }
+      setLoading(false);
+    }, []);
+
+    const handleLogin = (userData) => {
+      setUser(userData);
+      if (userData.must_change_password) setMustChangePw(true);
+    };
+
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setMustChangePw(false);
+      setShowDeactivateModal(false);
+    };
+
+    const handleDeactivateConfirm = async () => {
+      setShowDeactivateModal(false);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/account/deactivate`, { method:'POST', headers:{Authorization:`Bearer ${token}`} });
+      if (res.ok) { alert('Your account has been deactivated. Contact admin at truhoang1711@gmail.com to reactivate within 2 months.'); handleLogout(); }
+      else { const d = await res.json(); alert('Error: '+d.error); }
+    };
+
+    if (loading) return <div style={{color:'white',textAlign:'center',padding:'50px'}}>Loading...</div>;
+
+    return (
+      <div className="app-container">
+        {!user
+          ? <Auth onLogin={handleLogin} />
+          : mustChangePw
+            ? <ForceChangePasswordModal onSuccess={()=>setMustChangePw(false)} onLogout={handleLogout} />
+            : <Dashboard user={user} onLogout={handleLogout} showDeactivateModal={showDeactivateModal} setShowDeactivateModal={setShowDeactivateModal} />
+        }
+        {showDeactivateModal && <DeactivateAccountModal onClose={()=>setShowDeactivateModal(false)} onConfirm={handleDeactivateConfirm} />}
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
