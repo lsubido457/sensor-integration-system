@@ -199,6 +199,24 @@ db.serialize(() => {
   /* ================= CREATE SUPER ADMIN ================= */
 
   createSuperAdmin();
+
+  /* ================= LOGIN ATTEMPTS ================= */
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS login_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      identifier TEXT NOT NULL,
+      ip_address TEXT,
+      user_agent TEXT,
+      device_fingerprint TEXT,
+      was_successful INTEGER DEFAULT 0,
+      is_new_device INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
 });
 
 /* ============================================================
